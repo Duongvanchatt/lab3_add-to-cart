@@ -1,23 +1,38 @@
-import logo from './logo.svg';
+import { useState } from 'react';
 import './App.css';
-
+import Cart from './component/Cart';
+import Main from './component/Main';
+import data from './data';
 function App() {
+  const {products} = data;
+  const [cartItems, setCartItems] = useState([]);
+  const onAdd = (product) =>{
+    const exist = cartItems.find((X) => X.id === product.id);
+    if(exist){
+      setCartItems(cartItems.map((X) => X.id === product.id ? {...exist, qty: exist.qty + 1}: X
+      )
+      );
+    }else{
+      setCartItems([...cartItems, {...product, qty: 1}]);
+    }
+  };
+  const onRemove = (product) =>{
+     const exist = cartItems.find((X) => X.id === product.id);
+
+     if(exist.qty === 1){
+      setCartItems(cartItems.filter((X)=> X.id !== product.id));
+     }else{
+      setCartItems(cartItems.map((X) => X.id === product.id ? {...exist, qty: exist.qty - 1}: X
+        )
+      );
+     }
+  };
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+       <Main onAdd={onAdd}  products = {products}></Main>
+       <div>
+        <Cart onAdd={onAdd} onRemove={onRemove} cartItems={cartItems} ></Cart>
+       </div>
     </div>
   );
 }
